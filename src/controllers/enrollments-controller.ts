@@ -22,6 +22,14 @@ export async function postCreateOrUpdateEnrollment(req: AuthenticatedRequest, re
 
 // TODO - Receber o CEP do usuário por query params.
 export async function getAddressFromCEP(req: AuthenticatedRequest, res: Response) {
-  const address = await enrollmentsService.getAddressFromCEP();
-  res.status(httpStatus.OK).send(address);
+  const rawCep = req.query.cep;
+  if (typeof rawCep === 'string') {
+    // O valor já é uma string
+    const cep = rawCep;
+    const address = await enrollmentsService.getAddressFromCEP(cep);
+    res.status(httpStatus.OK).send(address);
+  } else {
+    // Tratar o cenário em que o valor não é uma string
+    res.status(httpStatus.BAD_REQUEST).send({ error: 'CEP must be a string' });
+  }
 }
