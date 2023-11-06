@@ -4,21 +4,19 @@ import { notFoundError } from '@/errors';
 import { addressRepository, CreateAddressParams, enrollmentRepository, CreateEnrollmentParams } from '@/repositories';
 import { exclude } from '@/utils/prisma-utils';
 import { ApplicationError } from '@/protocols';
-import axios from 'axios';
 
 // TODO - Receber o CEP por parâmetro nesta função.
 
 async function getAddressFromCEP(cep: string) {
-  // Verificar se o CEP possui exatamente 7 dígitos numéricos
-  if (!/^\d{8}$/.test(cep)) {
+  // Verificar se o CEP possui exatamente 9 dígitos
+  if (!/^\d{5}-\d{3}$/.test(cep) && !/^\d{8}$/.test(cep)) {
     const error: ApplicationError = {
       name: 'InvalidDataError',
-      message: 'CEP must have 8 numeric digits.',
+      message: 'CEP must have the format "XXXXX-XXX".',
     };
     throw error;
   }
 
-  // Chamada à API do ViaCEP
   try {
     const result = await request.get(`${process.env.VIA_CEP_API}/${cep}/json/`);
     console.log(result);
@@ -44,7 +42,6 @@ async function getAddressFromCEP(cep: string) {
     throw error;
   }
 }
-
 
 async function getOneWithAddressByUserId(userId: number): Promise<GetOneWithAddressByUserIdResult> {
   const enrollmentWithAddress = await enrollmentRepository.findWithAddressByUserId(userId);

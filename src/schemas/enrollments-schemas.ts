@@ -14,7 +14,7 @@ export const createOrUpdateEnrollmentSchema = Joi.object<CreateOrUpdateEnrollmen
   birthday: Joi.string().isoDate().isoDate().required(),
   phone: mobilePhoneValidationSchema,
   address: Joi.object({
-    cep: Joi.string().required(),
+    cep: cepValidationSchema,
     street: Joi.string().required(),
     city: Joi.string().required(),
     number: Joi.string().required(),
